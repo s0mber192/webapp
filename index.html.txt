@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Розыгрыш</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif;
+            background: linear-gradient(145deg, #1e2a3a 0%, #0f1724 100%);
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+        }
+        .container {
+            text-align: center;
+            padding: 20px;
+            background: rgba(0,0,0,0.5);
+            border-radius: 40px;
+            backdrop-filter: blur(10px);
+            width: 80%;
+            max-width: 300px;
+            box-shadow: 0 20px 35px rgba(0,0,0,0.3);
+        }
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        .gift {
+            font-size: 5rem;
+            animation: bounce 1s infinite alternate;
+            margin: 20px 0;
+        }
+        @keyframes bounce {
+            from { transform: translateY(0px); }
+            to { transform: translateY(-15px); }
+        }
+        button {
+            background: #ff5722;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            padding: 12px 25px;
+            border-radius: 50px;
+            width: 80%;
+            font-weight: bold;
+            margin-top: 20px;
+            box-shadow: 0 5px 0 #b13e16;
+            transition: 0.1s linear;
+            cursor: pointer;
+        }
+        button:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #b13e16;
+        }
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: gold;
+            top: -10px;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: fall 2s linear forwards;
+        }
+        @keyframes fall {
+            to { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="gift">🎁</div>
+        <h1>Розыгрыш!</h1>
+        <p>Нажми кнопку, чтобы подтвердить участие</p>
+        <button id="joinBtn">Участвовать</button>
+    </div>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.ready(); // сообщаем, что приложение готово
+        tg.expand(); // на весь экран
+
+        function createConfetti() {
+            for (let i = 0; i < 100; i++) {
+                let conf = document.createElement('div');
+                conf.classList.add('confetti');
+                conf.style.left = Math.random() * 100 + '%';
+                conf.style.animationDuration = Math.random() * 1.5 + 1 + 's';
+                conf.style.backgroundColor = `hsl(${Math.random() * 360}, 80%, 60%)`;
+                document.body.appendChild(conf);
+                setTimeout(() => conf.remove(), 2000);
+            }
+        }
+
+        document.getElementById('joinBtn').addEventListener('click', () => {
+            // Отправляем данные боту, что пользователь нажал "Участвовать"
+            tg.sendData("join");
+            createConfetti();
+            const btn = document.getElementById('joinBtn');
+            btn.innerText = "✅ Участвую!";
+            btn.disabled = true;
+            setTimeout(() => {
+                tg.close(); // закрыть мини-апп через 1.5 секунды
+            }, 1500);
+        });
+    </script>
+</body>
+</html>
